@@ -2,11 +2,14 @@ package apns
 
 import (
 	"crypto/tls"
+	"crypto/x509"
 	"encoding/binary"
 	"errors"
 	"net"
 	"strings"
 	"time"
+	"io/ioutil"
+	"encoding/pem"
 )
 
 var _ APNSClient = &Client{}
@@ -31,8 +34,10 @@ type Client struct {
 	Gateway           string
 	CertificateFile   string
 	CertificateBase64 string
+	CertPassphrase    string
 	KeyFile           string
 	KeyBase64         string
+	KeyPassphrase     string
 }
 
 // BareClient can be used to set the contents of your
@@ -45,6 +50,14 @@ func BareClient(gateway, certificateBase64, keyBase64 string) (c *Client) {
 	return
 }
 
+// BareClientWithPasspharse same as BareClient but with Passpharse
+func BareClientWithPasspharse(gateway, certificateBase64, certPassphrase, keyBase64 , keyPassphrase string) (c *Client) {
+	c = BareClient(gateway, certificateBase64, keyBase64)
+	c.CertPassphrase = certPassphrase
+	c.KeyPassphrase = keyPassphrase
+	return
+}
+
 // NewClient assumes you'll be passing in paths that
 // point to your certificate and key.
 func NewClient(gateway, certificateFile, keyFile string) (c *Client) {
@@ -52,6 +65,14 @@ func NewClient(gateway, certificateFile, keyFile string) (c *Client) {
 	c.Gateway = gateway
 	c.CertificateFile = certificateFile
 	c.KeyFile = keyFile
+	return
+}
+
+// NewClientWithPasspharse same as NewClient but with Passpharse
+func NewClientWithPasspharse(gateway, certificateFile, certPassphrase, keyFile, keyPassphrase string) (c *Client) {
+	c = NewClient(gateway, certificateFile, keyFile)
+	c.CertPassphrase = certPassphrase
+	c.KeyPassphrase = keyPassphrase
 	return
 }
 
@@ -96,7 +117,23 @@ func (client *Client) ConnectAndWrite(resp *PushNotificationResponse, payload []
 
 	if len(client.CertificateBase64) == 0 && len(client.KeyBase64) == 0 {
 		// The user did not specify raw block contents, so check the filesystem.
-		cert, err = tls.LoadX509KeyPair(client.CertificateFile, client.KeyFile)
+		certPEMBlock, err := ioutil.ReadFile(client.CertificateFile)
+		if err != nil {
+			return err
+		} else if client.CertPassphrase != "" {
+			block, _ := pem.Decode(certPEMBlock)
+			certPEMBlock, err = x509.DecryptPEMBlock(block, []byte(client.CertPassphrase))
+			return err
+		}
+		keyPEMBlock, err := ioutil.ReadFile(client.KeyFile)
+		if err != nil {
+			return err
+		} else if client.KeyPassphrase != "" {
+			block, _ := pem.Decode(keyPEMBlock)
+			keyPEMBlock, err = x509.DecryptPEMBlock(block, []byte(client.KeyPassphrase))
+			return err
+		}
+		cert, err = tls.X509KeyPair(certPEMBlock, keyPEMBlock)
 	} else {
 		// The user provided the raw block contents, so use that.
 		cert, err = tls.X509KeyPair([]byte(client.CertificateBase64), []byte(client.KeyBase64))
