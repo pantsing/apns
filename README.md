@@ -1,16 +1,16 @@
 # apns
 
-Utilities for Apple Push Notification and Feedback Services.
+Utilities for Sending Apple Push Notification in Bulk and Feedback Services.
 
-[![GoDoc](https://godoc.org/github.com/anachronistic/apns?status.png)](https://godoc.org/github.com/anachronistic/apns)
+[![GoDoc](https://godoc.org/github.com/pantsing/apns?status.png)](https://godoc.org/github.com/pantsing/apns)
 
 ## Installation
 
-`go get github.com/anachronistic/apns`
+`go get github.com/pantsing/apns`
 
 ## Documentation
 
-- [APNS package documentation](http://godoc.org/github.com/anachronistic/apns)
+- [APNS package documentation](http://godoc.org/github.com/pantsing/apns)
 - [Information on the APN JSON payloads](http://developer.apple.com/library/mac/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/ApplePushService.html)
 - [Information on the APN binary protocols](http://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/CommunicatingWIthAPS.html)
 - [Information on APN troubleshooting](http://developer.apple.com/library/ios/#technotes/tn2265/_index.html)
@@ -23,7 +23,7 @@ package main
 
 import (
   "fmt"
-  apns "github.com/anachronistic/apns"
+  apns "github.com/pantsing/apns"
 )
 
 func main() {
@@ -57,7 +57,7 @@ package main
 
 import (
   "fmt"
-  apns "github.com/anachronistic/apns"
+  apns "github.com/pantsing/apns"
 )
 
 func main() {
@@ -109,7 +109,7 @@ package main
 
 import (
   "fmt"
-  apns "github.com/anachronistic/apns"
+  apns "github.com/pantsing/apns"
 )
 
 func main() {
@@ -150,7 +150,7 @@ package main
 
 import (
   "fmt"
-  apns "github.com/anachronistic/apns"
+  apns "github.com/pantsing/apns"
 )
 
 func main() {
@@ -186,7 +186,7 @@ package main
 
 import (
   "fmt"
-  apns "github.com/anachronistic/apns"
+  apns "github.com/pantsing/apns"
   "os"
 )
 

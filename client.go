@@ -2,6 +2,7 @@ package apns
 
 import (
 	"crypto/tls"
+	"encoding/binary"
 	"errors"
 	"net"
 	"strings"
@@ -158,6 +159,10 @@ func (client *Client) ConnectAndWrite(resp *PushNotificationResponse, payload []
 	case r := <-responseChannel:
 		resp.Success = false
 		resp.AppleResponse = ApplePushResponses[r[1]]
+		identifier, n := binary.Varint(r[2:6])
+		if n > 0 {
+			resp.Identifier = int32(identifier)
+		}
 		err = errors.New(resp.AppleResponse)
 	case <-timeoutChannel:
 		resp.Success = true
