@@ -51,7 +51,7 @@ func BareClient(gateway, certificateBase64, keyBase64 string) (c *Client) {
 }
 
 // BareClientWithPasspharse same as BareClient but with Passpharse
-func BareClientWithPasspharse(gateway, certificateBase64, certPassphrase, keyBase64 , keyPassphrase string) (c *Client) {
+func BareClientWithPassphrase(gateway, certificateBase64, certPassphrase, keyBase64 , keyPassphrase string) (c *Client) {
 	c = BareClient(gateway, certificateBase64, keyBase64)
 	c.CertPassphrase = certPassphrase
 	c.KeyPassphrase = keyPassphrase
@@ -69,7 +69,7 @@ func NewClient(gateway, certificateFile, keyFile string) (c *Client) {
 }
 
 // NewClientWithPasspharse same as NewClient but with Passpharse
-func NewClientWithPasspharse(gateway, certificateFile, certPassphrase, keyFile, keyPassphrase string) (c *Client) {
+func NewClientWithPassphrase(gateway, certificateFile, certPassphrase, keyFile, keyPassphrase string) (c *Client) {
 	c = NewClient(gateway, certificateFile, keyFile)
 	c.CertPassphrase = certPassphrase
 	c.KeyPassphrase = keyPassphrase
