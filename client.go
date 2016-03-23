@@ -50,14 +50,6 @@ func BareClient(gateway, certificateBase64, keyBase64 string) (c *Client) {
 	return
 }
 
-// BareClientWithPasspharse same as BareClient but with Passpharse
-func BareClientWithPassphrase(gateway, certificateBase64, certPassphrase, keyBase64 , keyPassphrase string) (c *Client) {
-	c = BareClient(gateway, certificateBase64, keyBase64)
-	c.CertPassphrase = certPassphrase
-	c.KeyPassphrase = keyPassphrase
-	return
-}
-
 // NewClient assumes you'll be passing in paths that
 // point to your certificate and key.
 func NewClient(gateway, certificateFile, keyFile string) (c *Client) {
@@ -65,14 +57,6 @@ func NewClient(gateway, certificateFile, keyFile string) (c *Client) {
 	c.Gateway = gateway
 	c.CertificateFile = certificateFile
 	c.KeyFile = keyFile
-	return
-}
-
-// NewClientWithPasspharse same as NewClient but with Passpharse
-func NewClientWithPassphrase(gateway, certificateFile, certPassphrase, keyFile, keyPassphrase string) (c *Client) {
-	c = NewClient(gateway, certificateFile, keyFile)
-	c.CertPassphrase = certPassphrase
-	c.KeyPassphrase = keyPassphrase
 	return
 }
 
