@@ -2,14 +2,11 @@ package apns
 
 import (
 	"crypto/tls"
-	"crypto/x509"
 	"encoding/binary"
 	"errors"
 	"net"
 	"strings"
 	"time"
-	"io/ioutil"
-	"encoding/pem"
 )
 
 var _ APNSClient = &Client{}
