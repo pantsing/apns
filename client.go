@@ -101,23 +101,7 @@ func (client *Client) ConnectAndWrite(resp *PushNotificationResponse, payload []
 
 	if len(client.CertificateBase64) == 0 && len(client.KeyBase64) == 0 {
 		// The user did not specify raw block contents, so check the filesystem.
-		certPEMBlock, err := ioutil.ReadFile(client.CertificateFile)
-		if err != nil {
-			return err
-		} else if client.CertPassphrase != "" {
-			block, _ := pem.Decode(certPEMBlock)
-			certPEMBlock, err = x509.DecryptPEMBlock(block, []byte(client.CertPassphrase))
-			return err
-		}
-		keyPEMBlock, err := ioutil.ReadFile(client.KeyFile)
-		if err != nil {
-			return err
-		} else if client.KeyPassphrase != "" {
-			block, _ := pem.Decode(keyPEMBlock)
-			keyPEMBlock, err = x509.DecryptPEMBlock(block, []byte(client.KeyPassphrase))
-			return err
-		}
-		cert, err = tls.X509KeyPair(certPEMBlock, keyPEMBlock)
+		cert, err = tls.LoadX509KeyPair(client.CertificateFile, client.KeyFile)
 	} else {
 		// The user provided the raw block contents, so use that.
 		cert, err = tls.X509KeyPair([]byte(client.CertificateBase64), []byte(client.KeyBase64))
