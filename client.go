@@ -4,9 +4,11 @@ import (
 	"crypto/tls"
 	"encoding/binary"
 	"errors"
+	"bytes"
 	"net"
 	"strings"
 	"time"
+	"github.com/qiniu/log"
 )
 
 var _ APNSClient = &Client{}
@@ -171,13 +173,17 @@ func (client *Client) ConnectAndWrite(resp *PushNotificationResponse, payload []
 	// The first byte will always be set to 8.
 	select {
 	case r := <-responseChannel:
+		if len(r)!=6{
+			log.Warn("Malfrom response received from Apple")
+			resp.Success = true
+			return
+		}
 		resp.Success = false
 		resp.AppleResponse = ApplePushResponses[r[1]]
 		resp.ResponseCode = r[1]
-		identifier, n := binary.Varint(r[2:6])
-		if n > 0 {
-			resp.Identifier = int32(identifier)
-		}
+
+		b_buf := bytes.NewBuffer(r[2:6])
+		binary.Read(b_buf, binary.BigEndian, &resp.Identifier)
 		err = errors.New(resp.AppleResponse)
 		resp.Error = err
 	case <-timeoutChannel:
