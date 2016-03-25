@@ -105,6 +105,9 @@ func (client *Client) ConnectAndWrite(resp *PushNotificationResponse, payload []
 	}
 
 	if err != nil {
+		resp.Success = false
+		resp.ResponseCode = CERT_ERROR
+		resp.Error = err
 		return err
 	}
 
@@ -116,6 +119,9 @@ func (client *Client) ConnectAndWrite(resp *PushNotificationResponse, payload []
 
 	conn, err := net.Dial("tcp", client.Gateway)
 	if err != nil {
+		resp.Success = false
+		resp.ResponseCode = INTERNET_ERROR
+		resp.Error = err
 		return err
 	}
 	defer conn.Close()
@@ -123,12 +129,18 @@ func (client *Client) ConnectAndWrite(resp *PushNotificationResponse, payload []
 	tlsConn := tls.Client(conn, conf)
 	err = tlsConn.Handshake()
 	if err != nil {
+		resp.Success = false
+		resp.ResponseCode = INTERNET_ERROR
+		resp.Error = err
 		return err
 	}
 	defer tlsConn.Close()
 
 	_, err = tlsConn.Write(payload)
 	if err != nil {
+		resp.Success = false
+		resp.ResponseCode = INTERNET_ERROR
+		resp.Error = err
 		return err
 	}
 
@@ -161,11 +173,13 @@ func (client *Client) ConnectAndWrite(resp *PushNotificationResponse, payload []
 	case r := <-responseChannel:
 		resp.Success = false
 		resp.AppleResponse = ApplePushResponses[r[1]]
+		resp.ResponseCode = r[1]
 		identifier, n := binary.Varint(r[2:6])
 		if n > 0 {
 			resp.Identifier = int32(identifier)
 		}
 		err = errors.New(resp.AppleResponse)
+		resp.Error = err
 	case <-timeoutChannel:
 		resp.Success = true
 	}
