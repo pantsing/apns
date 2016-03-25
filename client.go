@@ -178,7 +178,7 @@ func (client *Client) ConnectAndWrite(resp *PushNotificationResponse, payload []
 		resp.Success = false
 		resp.AppleResponse = ApplePushResponses[r[1]]
 		resp.ResponseCode = r[1]
-		resp.Identifier = binary.BigEndian.Uint32(r[2:6])
+		resp.Identifier = int32(binary.BigEndian.Uint32(r[2:6]))
 		err = errors.New(resp.AppleResponse)
 		resp.Error = err
 	case <-timeoutChannel:
