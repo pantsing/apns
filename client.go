@@ -117,7 +117,7 @@ func (client *Client) ConnectAndWrite(resp *PushNotificationResponse, payload []
 		ServerName:   gatewayParts[0],
 	}
 
-	conn, err := net.Dial("tcp", client.Gateway)
+	conn, err := net.DialTimeout("tcp", client.Gateway, 30*time.Second)
 	if err != nil {
 		resp.Success = false
 		resp.ResponseCode = INTERNET_ERROR
