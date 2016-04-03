@@ -117,16 +117,17 @@ func (client *Client) ConnectAndWrite(resp *PushNotificationResponse, payload []
 		ServerName:   gatewayParts[0],
 	}
 
-	conn, err := net.DialTimeout("tcp", client.Gateway, 30*time.Second)
+	dialer := &net.Dialer{
+		Timeout: 30*time.Second,
+	}
+	tlsConn, err := tls.DialWithDialer(dialer, "tcp", client.Gateway, conf)
 	if err != nil {
 		resp.Success = false
 		resp.ResponseCode = INTERNET_ERROR
 		resp.Error = err
 		return err
 	}
-	defer conn.Close()
 
-	tlsConn := tls.Client(conn, conf)
 	err = tlsConn.Handshake()
 	if err != nil {
 		resp.Success = false
