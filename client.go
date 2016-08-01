@@ -140,7 +140,7 @@ func (client *Client) ConnectAndWrite(resp *PushNotificationResponse, payload []
 	_, err = tlsConn.Write(payload)
 	if err != nil {
 		resp.Success = false
-		resp.ResponseCode = INTERNET_ERROR
+		resp.ResponseCode = INTERNET_WRITE_ERROR
 		resp.Error = err
 		return err
 	}
@@ -172,7 +172,7 @@ func (client *Client) ConnectAndWrite(resp *PushNotificationResponse, payload []
 	// The first byte will always be set to 8.
 	select {
 	case r := <-responseChannel:
-		if len(r)!=6{
+		if len(r) != 6 {
 			resp.Success = true
 			return
 		}

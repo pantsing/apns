@@ -19,6 +19,7 @@ const (
 	UNKNOWN              uint8 = 255
 	CERT_ERROR           uint8 = 101
 	INTERNET_ERROR       uint8 = 103
+	INTERNET_WRITE_ERROR uint8 = 107
 )
 
 // This enumerates the response codes that Apple defines
